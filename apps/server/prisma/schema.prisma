@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql",
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(uuid())
+  name       String
+  email      String   @unique
+  password   String
+  role       Role
+  createdAt  DateTime @default(now())
+
+  institutionsCreated Institution[] @relation("InstitutionCreator")
+  institutionsUpdated Institution[] @relation("InstitutionUpdater")
+}
+enum Role {
+  ADMIN
+  SUPERVISOR
+}
+
+
+model Institution {
+  id          String   @id @default(uuid())
+  name        String
+  logo        String?
+  website     String?
+  address     String?
+  status      Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  createdById String
+  updatedById String?
+
+  createdBy User @relation("InstitutionCreator", fields: [createdById], references: [id])
+  updatedBy User? @relation("InstitutionUpdater", fields: [updatedById], references: [id])
+
+  certifications Certification[]
+}
+
+
+model Certification {
+  id             String   @id @default(uuid())
+
+  institutionId  String
+  institution     Institution @relation(fields: [institutionId], references: [id])
+
+  issuedBy        String
+  holderName      String
+  holderEmail     String
+
+  title           String
+  description     String?
+
+  issuedAt        DateTime
+  expiresAt       DateTime?
+
+  grade           String?
+  hours           Int?
+
+  status          CertificationStatus
+
+  qrToken         String @unique
+  qrImage         String?
+
+  certificateNo   String @unique
+
+  createdAt       DateTime @default(now())
+}
+enum CertificationStatus {
+  ACCEPTED
+  UNDER_REVIEW
+  REJECTED
+}
