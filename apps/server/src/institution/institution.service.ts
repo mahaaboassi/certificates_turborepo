@@ -87,7 +87,6 @@ export class InstitutionsService {
 
   async update(id: number, dto: UpdateInstitutionDto, userId: number) {
     await this.findOne(id);
-    console.log(dto);
     
     const data = Object.fromEntries(
       Object.entries(dto).filter(([_, v]) => v !== undefined),

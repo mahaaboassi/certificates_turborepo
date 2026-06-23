@@ -24,7 +24,7 @@ export class UserController {
   create(@Body() dto: CreateUserDto, @Request() req) {
     if (req.user.role !== 'ADMIN')
       throw new ForbiddenException('Access denied');
-    return this.userService.create(dto);
+    return this.userService.create(dto, req.user.sub);
   }
 
   @Get()
@@ -49,7 +49,7 @@ export class UserController {
   ) {
     if (req.user.role !== 'ADMIN')
       throw new ForbiddenException('Access denied');
-    return this.userService.update(id, dto);
+    return this.userService.update(id, dto, req.user.sub);
   }
 
   @Delete(':id')

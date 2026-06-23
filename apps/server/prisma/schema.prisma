@@ -12,15 +12,27 @@ datasource db {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
-  name       String
-  email      String   @unique
-  password   String
-  role       Role
-  createdAt  DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(SUPERVISOR)
+  createdAt DateTime @default(now())
+  updatedAt DateTime? @updatedAt
 
-  institutionsCreated Institution[] @relation("InstitutionCreator")
-  institutionsUpdated Institution[] @relation("InstitutionUpdater")
+  createdById Int?
+  updatedById Int?
+
+  createdBy User?  @relation("UserCreator", fields: [createdById], references: [id])
+  updatedBy User?  @relation("UserUpdater", fields: [updatedById], references: [id])
+
+  usersCreated User[] @relation("UserCreator")
+  usersUpdated User[] @relation("UserUpdater")
+
+  institutionsCreated   Institution[]   @relation("InstitutionCreator")
+  institutionsUpdated   Institution[]   @relation("InstitutionUpdater")
+  certificationsIssued  Certification[] @relation("CertificationIssuer")
+  certificationsUpdated Certification[] @relation("CertificationUpdater")
 }
 enum Role {
   ADMIN
@@ -50,32 +62,39 @@ model Institution {
 
 
 model Certification {
-  id              Int      @id @default(autoincrement())
+  id               Int                 @id @default(autoincrement())
 
-  institutionId   Int
-  institution     Institution @relation(fields: [institutionId], references: [id])
+  institutionId    Int
+  institution      Institution         @relation(fields: [institutionId], references: [id])
 
-  issuedBy        Int
-  holderName      String
-  holderEmail     String
+  issuedBy         Int
+  issuedByUser     User                @relation("CertificationIssuer", fields: [issuedBy], references: [id])
 
-  title           String
-  description     String?
+  updatedById      Int?
+  updatedBy        User?               @relation("CertificationUpdater", fields: [updatedById], references: [id])
 
-  issuedAt        DateTime
-  expiresAt       DateTime?
+  holderName       String
+  holderEmail      String
 
-  grade           String?
-  hours           Int?
+  title            String
+  description      String?
 
-  status          CertificationStatus
+  issuedAt         DateTime
+  expiresAt        DateTime?
 
-  qrToken         String @unique
-  qrImage         String?
+  grade            String?
+  hours            Int?
 
-  certificateNo   String @unique
+  status           CertificationStatus @default(UNDER_REVIEW)
 
-  createdAt       DateTime @default(now())
+  qrToken          String              @unique
+  qrImage          String?
+
+  certificateNo    String              @unique
+  certificateImage String?
+
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
 }
 enum CertificationStatus {
   ACCEPTED

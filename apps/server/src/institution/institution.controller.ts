@@ -45,7 +45,7 @@ export class InstitutionsController {
   ) {
     if (req.user.role !== 'ADMIN')
       throw new ForbiddenException('Access denied');
-    console.log("heree", req.user);
+    console.log("heree", dto);
     
     return this.institutionsService.update(+id, dto, req.user.sub);
   }

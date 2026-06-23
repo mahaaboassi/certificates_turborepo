@@ -13,7 +13,7 @@ import * as bcrypt from 'bcrypt';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async create(dto: CreateUserDto) {
+  async create(dto: CreateUserDto, userId) {
     const existing = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
@@ -23,10 +23,9 @@ export class UserService {
 
     return this.prisma.user.create({
       data: {
-        name: dto.name,
-        email: dto.email,
+        ...dto,
         password: hashedPassword,
-        role: dto.role,
+        createdById: userId,
       },
       select: {
         id: true,
@@ -34,6 +33,9 @@ export class UserService {
         email: true,
         role: true,
         createdAt: true,
+        createdBy: {
+          select: { id: true, name: true },
+        },
       },
     });
   }
@@ -46,6 +48,13 @@ export class UserService {
         email: true,
         role: true,
         createdAt: true,
+        updatedAt: true,
+        createdBy: {
+          select: { id: true, name: true },
+        },
+        updatedBy: {
+          select: { id: true, name: true },
+        },
       },
     });
   }
@@ -59,6 +68,13 @@ export class UserService {
         email: true,
         role: true,
         createdAt: true,
+        updatedAt: true,
+        createdBy: {
+          select: { id: true, name: true },
+        },
+        updatedBy: {
+          select: { id: true, name: true },
+        },
       },
     });
 
@@ -67,7 +83,7 @@ export class UserService {
     return user;
   }
 
-  async update(id: number, dto: UpdateUserDto) {
+  async update(id: number, dto: UpdateUserDto, userId: number) {
     await this.findOne(id);
 
     // remove undefined fields
@@ -85,13 +101,23 @@ export class UserService {
     
     return  await this.prisma.user.update({
         where: { id },
-        data,
+        data :{
+          ...data,
+          updatedById: userId,
+        },
         select: {
           id: true,
           name: true,
           email: true,
           role: true,
           createdAt: true,
+          updatedAt: true,
+          createdBy: {
+            select: { id: true, name: true },
+          },
+          updatedBy: {
+            select: { id: true, name: true },
+          },
         },
       });
     }
