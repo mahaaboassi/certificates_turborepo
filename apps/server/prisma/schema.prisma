@@ -30,7 +30,7 @@ enum Role {
 
 model Institution {
   id          Int      @id @default(autoincrement())
-  name        String
+  name        String   @unique
   logo        String?
   website     String?
   address     String?
@@ -55,7 +55,7 @@ model Certification {
   institutionId   Int
   institution     Institution @relation(fields: [institutionId], references: [id])
 
-  issuedBy        String
+  issuedBy        Int
   holderName      String
   holderEmail     String
 

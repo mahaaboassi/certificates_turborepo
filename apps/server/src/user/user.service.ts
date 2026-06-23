@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
+  BadRequestException
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -69,14 +70,20 @@ export class UserService {
   async update(id: number, dto: UpdateUserDto) {
     await this.findOne(id);
 
-    const data: any = { ...dto };
-    const plainPassword = dto.password ?? null;
+    // remove undefined fields
+    const data = Object.fromEntries(
+      Object.entries(dto).filter(([_, v]) => v !== undefined ),
+    );
+    
+    if (!Object.keys(data).length)
+      throw new BadRequestException('No fields to update');
 
     if (dto.password) {
       data.password = await bcrypt.hash(dto.password, 10);
     }
 
-    const user = await this.prisma.user.update({
+    
+    return  await this.prisma.user.update({
         where: { id },
         data,
         select: {
@@ -87,11 +94,6 @@ export class UserService {
           createdAt: true,
         },
       });
-
-      return {
-        ...user,
-        ...(plainPassword && { password: plainPassword }),
-      };
     }
 
   async remove(id: number) {

@@ -13,7 +13,7 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      forbidNonWhitelisted: true,
+      forbidNonWhitelisted: true, // ← this throws 422 if unknown field is sent
       transform: true,
       errorHttpStatusCode: 422,
     }),

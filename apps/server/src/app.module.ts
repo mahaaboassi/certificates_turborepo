@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
-import { UserModule } from './users/user.module';
-import { InstitutionsModule } from './institutions/institutions.module';
-import { CertificationsModule } from './certifications/certifications.module';
+import { UserModule } from './user/user.module';
+import { InstitutionsModule } from './institution/institution.module';
+import { CertificationsModule } from './certification/certifications.module';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
