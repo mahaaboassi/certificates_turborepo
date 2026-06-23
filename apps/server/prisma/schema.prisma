@@ -8,12 +8,11 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql",
-  url      = env("DATABASE_URL")
+  provider = "postgresql"
 }
 
 model User {
-  id         String   @id @default(uuid())
+  id         Int      @id @default(autoincrement())
   name       String
   email      String   @unique
   password   String
@@ -30,7 +29,7 @@ enum Role {
 
 
 model Institution {
-  id          String   @id @default(uuid())
+  id          Int      @id @default(autoincrement())
   name        String
   logo        String?
   website     String?
@@ -40,8 +39,8 @@ model Institution {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  createdById String
-  updatedById String?
+  createdById Int     
+  updatedById Int?
 
   createdBy User @relation("InstitutionCreator", fields: [createdById], references: [id])
   updatedBy User? @relation("InstitutionUpdater", fields: [updatedById], references: [id])
@@ -51,9 +50,9 @@ model Institution {
 
 
 model Certification {
-  id             String   @id @default(uuid())
+  id              Int      @id @default(autoincrement())
 
-  institutionId  String
+  institutionId   Int
   institution     Institution @relation(fields: [institutionId], references: [id])
 
   issuedBy        String
