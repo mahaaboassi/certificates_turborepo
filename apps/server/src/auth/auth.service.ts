@@ -22,11 +22,15 @@ export class AuthService {
     const valid = await bcrypt.compare(dto.password, user.password);
     if (!valid) throw new UnauthorizedException('Invalid credentials');
 
-    return this.signToken(user.id, user.email, user.role);
+    return this.signToken(user.id, user.email, user.role, user.name);
   }
 
-  private signToken(userId: number, email: string, role: string) {
+  private signToken(userId: number, email: string, role: string, name: string) {
     return {
+      id: userId,
+      name: name,
+      email: email,
+      role: role,
       access_token: this.jwt.sign({
         sub: userId,
         email,

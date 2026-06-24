@@ -87,3 +87,15 @@ export class CertificationsController {
     return this.certificationsService.remove(+id);
   }
 }
+
+@Controller('verify')
+export class PublicCertificationsController {
+  constructor(
+    private readonly certificationsService: CertificationsService,
+  ) {}
+
+  @Get(':qrToken')
+  findOneByToken(@Param('qrToken') qrToken: string) {
+    return this.certificationsService.findByQrToken(qrToken);
+  }
+}

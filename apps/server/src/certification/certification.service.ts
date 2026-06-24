@@ -136,6 +136,17 @@ export class CertificationsService {
     return certification;
   }
 
+  async findOneByToken(qrToken: string) {
+    const certification = await this.prisma.certification.findUnique({
+      where: { qrToken },
+      select: this.select,
+    });
+
+    if (!certification) throw new NotFoundException('Certification not found');
+    console.log(certification);
+    
+    return certification;
+  }
   async update(id: number, dto: UpdateCertificationDto, user: any, certificateFile?: Express.Multer.File) {
     await this.findOne(id);
     console.log("_______", user);
@@ -191,5 +202,19 @@ export class CertificationsService {
     await this.findOne(id);
     await this.prisma.certification.delete({ where: { id } });
     return { message: 'Certification deleted successfully' };
+  }
+  
+  
+  async findByQrToken(qrToken: string) {
+    const certificate = await this.prisma.certification.findUnique({
+      where: { qrToken },
+      select: this.select,
+    });
+
+    if (!certificate) {
+      throw new NotFoundException('Certificate not found');
+    }
+
+    return certificate;
   }
 }

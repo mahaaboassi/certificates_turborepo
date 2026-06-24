@@ -6,10 +6,14 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { GlobalExceptionFilter } from './common/filters/exception.filter';
+import { cwd } from 'process';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-
+  app.enableCors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  });
   app.useGlobalFilters(new GlobalExceptionFilter());
   app.useGlobalInterceptors(new ResponseInterceptor());
   app.useGlobalPipes(
@@ -21,7 +25,9 @@ async function bootstrap() {
     }),
   );
   // serve uploaded files
-  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+  // __dirname  points to dist/ (bad after build)
+  // cwd        always points to project root (good)
+  app.useStaticAssets(join(cwd(), 'uploads'), {
     prefix: '/uploads',
   });
   await app.listen(process.env.PORT ?? 4000);

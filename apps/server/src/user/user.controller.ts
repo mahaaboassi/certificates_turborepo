@@ -35,27 +35,27 @@ export class UserController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number, @Request() req) {
+  findOne(@Param('id') id: string, @Request() req) {
     if (req.user.role !== 'ADMIN')
       throw new ForbiddenException('Access denied');
-    return this.userService.findOne(id);
+    return this.userService.findOne(+id);
   }
 
   @Patch(':id')
   update(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() dto: UpdateUserDto,
     @Request() req,
   ) {
     if (req.user.role !== 'ADMIN')
       throw new ForbiddenException('Access denied');
-    return this.userService.update(id, dto, req.user.sub);
+    return this.userService.update(+id, dto, req.user.sub);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number, @Request() req) {
+  remove(@Param('id') id: string, @Request() req) {
     if (req.user.role !== 'ADMIN')
       throw new ForbiddenException('Access denied');
-    return this.userService.remove(id);
+    return this.userService.remove(+id);
   }
 }

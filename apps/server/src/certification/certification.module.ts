@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CertificationsService } from './certification.service';
-import { CertificationsController } from './certification.controller';
+import { CertificationsController, PublicCertificationsController } from './certification.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { MulterModule } from '@nestjs/platform-express';
 
@@ -11,7 +11,7 @@ import { MulterModule } from '@nestjs/platform-express';
       dest: './uploads',
     }),
   ],
-  controllers: [CertificationsController],
+  controllers: [CertificationsController,PublicCertificationsController],
   providers: [CertificationsService],
   exports: [CertificationsService],
 })

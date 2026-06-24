@@ -1,12 +1,81 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@import "tailwindcss";
+/* Scan Tailwind classes inside shared UI package components */
+@source "../../../packages/ui/**/*.{js,ts,jsx,tsx}";
+/* Breakpoints */
+@theme {
+  --breakpoint-xxs: 400px;
+  --breakpoint-xs: 500px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
 }
 
-@media (prefers-color-scheme: dark) {
+:root {
+  --background: #F7F9FC;
+  --primary: #051633;
+  --secondary: #0B1B48;
+  --grey: #374151;
+  --light_grey: #b9c0c9;
+  --accent: #E90F11;
+  --dark_surface: #111326;
+  --card: #FFFFFF;
+  --border: #E2E8F0;
+  --text_primary: #111827;
+  --text_secondary: #64748B;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  --info: #3B82F6;
+}
+
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+  }
+} */
+.primary-btn {
+  position: relative;
+  overflow: hidden;
+  background: var(--accent);
+  color: var(--background);
+  font-weight: 700;
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+/* shine layer */
+.primary-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+
+  transform: skewX(-20deg);
+}
+
+/* hover animation */
+.primary-btn:hover::before {
+  animation: shine 0.8s ease;
+}
+
+@keyframes shine {
+  0% {
+    left: -75%;
+  }
+  100% {
+    left: 125%;
   }
 }
 
@@ -17,14 +86,15 @@ body {
 }
 
 body {
-  color: var(--foreground);
+  color: var(--primary);
   background: var(--background);
+  /* font-weight: 300; */
 }
 
 * {
   box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+  /* padding: 0;
+  margin: 0; */
 }
 
 a {
@@ -35,16 +105,29 @@ a {
 .imgDark {
   display: none;
 }
+@keyframes goldenArrowLineMove {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(var(--rotate));
+  }
 
+  50% {
+    transform: translate3d(var(--move-x), var(--move-y), 0)
+      rotate(calc(var(--rotate) + 18deg));
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0) rotate(var(--rotate));
+  }
+}
+
+.golden-arrow-line {
+  filter: drop-shadow(0 0 8px rgba(215, 165, 3, 0.55));
+  animation-name: goldenArrowLineMove;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
-  }
-
-  .imgLight {
-    display: none;
-  }
-  .imgDark {
-    display: unset;
   }
 }

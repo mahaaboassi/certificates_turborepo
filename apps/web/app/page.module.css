@@ -14,6 +14,10 @@
   padding: 80px;
   gap: 64px;
   font-synthesis: none;
+  background: url("/banner_1.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
 @media (prefers-color-scheme: dark) {
