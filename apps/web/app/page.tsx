@@ -1,14 +1,24 @@
 "use client"
 import Image from "next/image";
-// Shared Component
-import { Input } from "@repo/ui/input";
-import { Button } from "@repo/ui/button";
+import { Mail, Lock } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 // For Validation
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { loginSchema } from "./schems";
+import { loginSchema } from "@/constants/schema"
+// Shared from Packages
 import { Helper } from "@repo/utils/helper";
 import { apiRoutes } from "@repo/utils/apiRoutes";
+// 
+import LottieAnimationHalfCap from "../components/animations/halfCap";
+import { Button } from "@/components/ui/button";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import { Card, CardContent } from "@/components/ui/card";
+import { toast } from "sonner"
+import Loading from "@/components/shared/loading";
+import { useApi } from "@/hooks/fetchClient";
+
 
 
 type LoginForm = {
@@ -18,6 +28,8 @@ type LoginForm = {
 
 
 export default function Home() {
+  
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -25,57 +37,114 @@ export default function Home() {
   } = useForm<LoginForm>({
     resolver: yupResolver(loginSchema),
   });
-
+  const [ isLoading, setIsLoading ] = useState(false)
+  useEffect(()=>{
+    if(sessionStorage.getItem("accessToken") || sessionStorage.getItem("user"))
+      router.push("/dashboard")
+  },[])
   const onSubmit = async (data: LoginForm) => {
-    const result = await Helper({
+    const { loading, error, call } = useApi({
       url: apiRoutes.auth.signIn,
       method: "POST",
       body: data,
-      origin_url: process.env.NEXT_PUBLIC_APP_URL || window.location.origin
+
     })
-    if(result){
-      console.log(result);
-      
+    setIsLoading(true)
+  
+    if(response){
+      console.log(response);
+      if(response.err == "0"){
+          toast.success("Logged in successfully.")
+
+          sessionStorage.setItem(
+            "user",
+            JSON.stringify({
+              name: response.data?.name,
+              email: response.data?.email,
+              id: response.data?.id,
+              role: response.data?.role
+            })
+          );
+          router.push("/dashboard")
+      }else{
+        toast.error(response.msg)
+        
+      }
+      setIsLoading(false)
     }else{
       console.log("sss");
-      
+      toast.error(message)
+      setIsLoading(false)
     }
   };
+  
   return (
-    <div className="bg-[var(--primary)] gap-4 h-screen flex justify-center items-center flex-col ">
-      <main className="space-y-4">
-        <div  className="space-y-4 ">
-          <div className="w-full flex justify-center">
-            <Image className="w-[110px] xs:w-[150px] h-full object-contain" src={"/logo.png"} alt="Logo" width={200} height={200} />
-          </div>
-          <div className="text-center">
-            {/* <h1 className="text-[var(--background)] font-bold !text-[2rem]">Smart Education Group</h1> */}
-            <p className="text-[var(--light_grey)]">Sign in to access your dashboard</p>
-          </div>
-        </div>
-        <form onSubmit={handleSubmit(onSubmit)} className="bg-[var(--card)] rounded-xl p-5 w-full xxs:w-[350px] xs:w-[400px] lg:w-[450px] space-y-4">
-            <div>
-              <div className="mb-1 text-[var(--grey)] text-[0.95rem]">
-                Email Address
+    <div className="grid lg:grid-cols-2 lg:h-screen bg-[var(--dark_surface)]">
+      <div className="hidden lg:flex justify-center items-center py-10 lg:p-0">
+        <Image className="!w-auto !h-[200px] lg:!w-[900px] lg:!h-[500px] object-contain" src="/branches.png" alt="Branches"  
+              width={1200}
+              height={800} />
+
+      </div>
+      
+      <div className="flex flex-col space-y-4 justify-center items-center rounded-tr-[2em] rounded-tl-[2em] 
+                      mt-20 lg:mt-0 lg:rounded-tr-[0] lg:rounded-tl-[4em]  bg-[var(--background)] pt-40 lg:p-0">
+        <div  className="space-y-4">
+            <div className="flex justify-center fixed top-30 right-5 lg:right-0 lg:top-0 lg:relative ">
+              <div className="absolute -top-3 lg:-top-10 left-1/2 -translate-x-1/2 ">
+                <LottieAnimationHalfCap/>
               </div>
-              <Input placeholder="Email" type="text" {...register("email")}/>
-              <p className="text-[var(--accent)] text-sm">{errors.email?.message}</p>
+              <Image className="!w-[60px] lg:!w-[150px] h-full object-contain" src={"/logo_withHalfShape.png"} alt="Logo" width={200} height={200} />
             </div>
-            <div>
-              <div className="mb-1 text-[var(--grey)] text-[0.95rem]">
-                Password
-              </div>
-              <Input placeholder="Password" type="password" {...register("password")}/>
-              <p className="text-[var(--accent)] text-sm">{errors.password?.message}</p>
+            <div className="text-center">
+              {/* <h1 className="text-[var(--background)] font-bold !text-[2rem]">Smart Education Group</h1> */}
+              <p className="text-[var(--grey)]">Sign in to access your dashboard</p>
             </div>
-            <div>
-              <Button className="primary-btn w-full py-2">Sign In</Button>
-            </div>
-        </form>
-      </main>
-      <footer className="text-[var(--light_grey)] text-center">
+          </div>
+         <Card className="bg-[var(--grey)] w-[90%] lg:w-[60%]">
+            <CardContent>
+              <form onSubmit={handleSubmit(onSubmit)} className="rounded-xl p-5 w-full space-y-4">
+                  <div>
+                    <div className="mb-1 text-[0.95rem] text-[var(--light)]">
+                      Email Address
+                    </div>
+                        <InputGroup className="w-full bg-[var(--secondary)]">
+                          <InputGroupInput {...register("email")} placeholder="Enter Email..." />
+                          <InputGroupAddon>
+                            <Mail />
+                          </InputGroupAddon>
+                          {/* <InputGroupAddon align="inline-end">12 results</InputGroupAddon> */}
+                        </InputGroup>
+                    <p className="text-[var(--danger)] text-sm">{errors.email?.message}</p>
+                  </div>
+                  <div>
+                    <div className="mb-1  text-[0.95rem] text-[var(--light)]">
+                      Password
+                    </div>
+                    <InputGroup className="w-full bg-[var(--secondary)]">
+                        <InputGroupInput {...register("password")} placeholder="Enter Password." />
+                        <InputGroupAddon>
+                          <Lock />
+                        </InputGroupAddon>
+                        {/* <InputGroupAddon align="inline-end">12 results</InputGroupAddon> */}
+                      </InputGroup>
+                    <p className="text-[var(--danger)] text-sm">{errors.password?.message}</p>
+                  </div>
+                  <div>
+                    <Button disabled={isLoading} variant="destructive" className="w-full">
+                      {isLoading? <Loading/>: "Sign In"}
+                    </Button>
+                  </div>
+              </form>
+            </CardContent>
+          </Card> 
+        
+        <footer className="text-[var(--grey)] text-center">
         © 2026 Certificate Management System
       </footer>
+      </div>
+
+      
     </div>
   );
 }

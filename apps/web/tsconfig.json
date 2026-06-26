@@ -4,8 +4,11 @@
     "plugins": [
       {
         "name": "next"
-      }
+      },
     ],
+    "paths": {
+      "@/*": ["./*"]
+    },
     "strictNullChecks": true
   },
   "include": [

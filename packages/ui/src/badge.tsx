@@ -27,9 +27,9 @@ export const Badge = ({ icon, className, label, status }: BadgeProps) => {
         borderColor: refColors[status]
       }}
       className={`${className} 
-      flex gap-5 justify-between border rounded-lg p-2 `}
+      flex gap-2 items-center border rounded-3xl p-2 `}
     >
-      {icon && <div>{icon} </div>}
+      {icon && <div >{icon} </div>}
       <div className="text-sm font-medium">
         {label}
       </div>
