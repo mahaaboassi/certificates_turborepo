@@ -1,19 +1,32 @@
-import { apiRoutes } from "@repo/utils/apiRoutes";
-import { Helper } from "@repo/utils/helper";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { UsersComponent } from "./users";
+// Shared from Packages
+import { Helper } from "@repo/utils/helper";
+import { apiRoutes } from "@repo/utils/apiRoutes";
+import { columns } from "./columns";
+
+
 
 const Users = async () => {
-  const cookieHeader = cookies().toString();
-  const {response, message} = await Helper({
+  const cookieStore = await cookies();
+  const result = await Helper({
     url: apiRoutes.users.findAll,
     method: "GET",
-    isFetchfresh: true,
-    origin_url: process.env.NEXT_PUBLIC_APP_URL || window.location.origin,
-    cookies: cookieHeader
+    origin_url: process.env.NEXT_PUBLIC_APP_URL || "http://127.0.0.1:4000" ,
+    headers: {
+      Cookie: cookieStore.toString(), 
+    },
   });
-
-  const data = response?.data;
-  if (!response || response.err == "1" || data.status != "ACCEPTED") {}
-  return(<div></div>)
+  if(result.status == 401){
+    // push to login page
+    redirect("/");
+  }
+  console.log("********",result.data.data)
+  if(result.ok)
+  return(<div className="space-y-4">
+    <h1> Users List</h1>
+    <UsersComponent columns={columns} data={result.data.data}/>
+  </div>)
 }
 export default Users

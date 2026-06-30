@@ -7,9 +7,6 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "@/constants/schema"
-// Shared from Packages
-import { Helper } from "@repo/utils/helper";
-import { apiRoutes } from "@repo/utils/apiRoutes";
 // 
 import LottieAnimationHalfCap from "../components/animations/halfCap";
 import { Button } from "@/components/ui/button";
@@ -39,43 +36,41 @@ export default function Home() {
   });
   const [ isLoading, setIsLoading ] = useState(false)
   useEffect(()=>{
-    if(sessionStorage.getItem("accessToken") || sessionStorage.getItem("user"))
+    if(localStorage.getItem("user"))
       router.push("/dashboard")
   },[])
   const onSubmit = async (data: LoginForm) => {
-    const { loading, error, call } = useApi({
-      url: apiRoutes.auth.signIn,
-      method: "POST",
-      body: data,
-
-    })
     setIsLoading(true)
-  
-    if(response){
-      console.log(response);
-      if(response.err == "0"){
-          toast.success("Logged in successfully.")
-
-          sessionStorage.setItem(
+    const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+        credentials: "include",
+      });
+      const result = await res.json();
+      console.log("res", result);
+      if(result.err == 0){ 
+        toast.success("Logged in successfully.")
+          localStorage.setItem(
             "user",
             JSON.stringify({
-              name: response.data?.name,
-              email: response.data?.email,
-              id: response.data?.id,
-              role: response.data?.role
+              name: result.data?.name,
+              email: result.data?.email,
+              id: result.data?.id,
+              role: result.data?.role
             })
           );
           router.push("/dashboard")
+          setIsLoading(false)
       }else{
-        toast.error(response.msg)
-        
+        toast.error(result.msg)
+        setIsLoading(false)
       }
-      setIsLoading(false)
-    }else{
-      console.log("sss");
-      toast.error(message)
-      setIsLoading(false)
-    }
+      
+  
+
   };
   
   return (

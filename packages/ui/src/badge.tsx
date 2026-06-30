@@ -6,10 +6,11 @@ interface BadgeProps {
   icon?: ReactNode;
   className?: string;
   label: string,
-  status: string
+  status: string,
+  size?: string
 }
 // Excepted colors warning, danger, info, success
-export const Badge = ({ icon, className, label, status }: BadgeProps) => {
+export const Badge = ({ icon, className, label, status, size }: BadgeProps) => {
   const refColors:any = {
     success: "#10B981",
     warning: "#F59E0B",
@@ -27,10 +28,10 @@ export const Badge = ({ icon, className, label, status }: BadgeProps) => {
         borderColor: refColors[status]
       }}
       className={`${className} 
-      flex gap-2 items-center border rounded-3xl p-2 `}
+      flex text-center gap-2 justify-center items-center border rounded-3xl p-2 `}
     >
       {icon && <div >{icon} </div>}
-      <div className="text-sm font-medium">
+      <div className={`${size? `!${size}`:"text-sm"} font-medium`}>
         {label}
       </div>
     </div>

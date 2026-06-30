@@ -19,9 +19,9 @@ export default function RootLayout({
         <AuthGuard>
           <SidebarProvider>
             <AppSidebar />
-            <main>
+            <main className="w-full ">
               <SidebarTrigger />
-              {children}
+              <div className="p-8">{children}</div>
             </main>
           </SidebarProvider>
         </AuthGuard>

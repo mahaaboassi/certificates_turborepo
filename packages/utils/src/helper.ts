@@ -7,6 +7,7 @@ type HelperProps = {
   params?: Record<string, string>;
   isFetchFresh?: boolean;
   origin_url?: string;
+  isFromClientSide?: boolean
 };
 
 export const Helper = async ({
@@ -18,6 +19,7 @@ export const Helper = async ({
   params,
   isFetchFresh,
   origin_url,
+  isFromClientSide
 }: HelperProps) => {
   try {
     const isFormData = body instanceof FormData;
@@ -48,6 +50,9 @@ export const Helper = async ({
       method,
       headers: finalHeaders,
       signal,
+      ...(isFromClientSide && {
+        credentials: "include",
+      }),
       cache: isFetchFresh ? "no-store" : "default",
       ...(method !== "GET" && method !== "DELETE"
         ? {
@@ -69,6 +74,7 @@ export const Helper = async ({
       ok: res.ok,
       status: res.status,
       data,
+      response: res
     };
   } catch (error: any) {
     return {

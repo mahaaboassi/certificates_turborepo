@@ -9,8 +9,8 @@ export const apiRoutes = {
         one: (id:string )=>(`${host}users/${id}`)
     },
     instituations:{
-        findAll: `${host}instituations`,
-        one: (id:string )=>(`${host}instituations/${id}`)
+        findAll: `${host}institutions`,
+        one: (id:string )=>(`${host}institutions/${id}`)
     },
     certifications:{
         findAll: `${host}certifications`,

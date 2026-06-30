@@ -14,17 +14,15 @@ type Props = {
 
 const Certificate = async ({ params }: Props) => {
   const { qrToken } = await params;
-
-  const {response, message} = await Helper({
+  const result = await Helper({
     url: apiRoutes.certifications.getOneByQR(qrToken),
     method: "GET",
-    hasToken: false,
-    isFetchfresh: true,
-    origin_url: process.env.NEXT_PUBLIC_APP_URL || window.location.origin,
+    origin_url: process.env.NEXT_PUBLIC_APP_URL || "http://127.0.0.1:4000",
   });
+  console.log( "********", result.data.data )
+  const data = result?.data?.data;
 
-  const data = response?.data;
-  if (!response || response.err == "1" || data.status != "ACCEPTED") {
+  if (!result.data.data || result.data.data.err == "1" || data.status != "ACCEPTED") {
     return <div>   
       <GoldenArrowsBackground/>
       <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--background)] p-6">

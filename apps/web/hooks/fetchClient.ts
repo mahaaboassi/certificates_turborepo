@@ -26,7 +26,7 @@ export function useApi({
             headers: {
               ...headers,
             },
-            credentials: "include"
+            isFromClientSide: true
       });
 
       if (!res.ok) {

@@ -3,7 +3,7 @@
 import { Helper } from "@repo/utils/helper";
 import { cookies } from "next/headers";
 
-export async function loginUser(data: { email: string; password: string }) {
+export async function loginUser(data:any, url: string, method:string) {
   const cookieHeader = cookies().toString();
 
   return Helper({
