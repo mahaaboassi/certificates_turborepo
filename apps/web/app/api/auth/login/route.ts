@@ -15,10 +15,10 @@ export async function POST(req: Request) {
     status: result.status,
   });
   // get cookie from raw response
-  const setCookie = result?.response?.headers?.get("set-cookie");
+  const setCookie = result?.response?.headers?.get("set-cookie"); // get the cookie from the raw response headers
 
   if (setCookie) {
-    response.headers.append("set-cookie", setCookie);
+    response.headers.append("set-cookie", setCookie); //send the cookie to the client
   }
 
   return response;

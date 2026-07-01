@@ -21,7 +21,7 @@ type DataTableProps<TData> = {
   data: TData[];
 };
 
-export function UsersComponent<TData>({
+export function DataTableComponent<TData>({
   columns,
   data,
 }: DataTableProps<TData>) {

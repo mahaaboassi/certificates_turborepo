@@ -19,4 +19,5 @@ export class CreateInstitutionDto {
   @IsOptional()
   @IsBoolean()
   status?: boolean;
+  
 }

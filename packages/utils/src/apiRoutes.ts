@@ -6,10 +6,12 @@ export const apiRoutes = {
     },
     users:{
         findAll: `${host}users`,
+        create: `${host}users`,
         one: (id:string )=>(`${host}users/${id}`)
     },
-    instituations:{
+    institutions:{
         findAll: `${host}institutions`,
+        create: `${host}institutions`,
         one: (id:string )=>(`${host}institutions/${id}`)
     },
     certifications:{

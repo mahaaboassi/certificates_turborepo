@@ -10,7 +10,7 @@ export async function DELETE(
 
     
     const result = await Helper({
-        url: apiRoutes.users.one(params.id),
+        url: apiRoutes.institutions.one(params.id),
         method: "DELETE",
     });
     console.log("hererert", result);
@@ -25,7 +25,7 @@ export async function POST(
 
     const body = await req.json();
     const result = await Helper({
-        url: apiRoutes.users.create,
+        url: apiRoutes.institutions.create,
         method: "POST",
         body: JSON.stringify(body),
     });
@@ -39,7 +39,7 @@ export async function PATCH(
 ) {
     const body = await req.json();
     const result = await Helper({
-        url: apiRoutes.users.one(params.id),
+        url: apiRoutes.institutions.one(params.id),
         method: "PATCH",
         body: JSON.stringify(body),
     });

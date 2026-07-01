@@ -6,6 +6,10 @@ import { Pencil, Trash2 } from "lucide-react";
 import { UsersProps } from "@/constants/types";
 import { Button } from "@/components/ui/button";
 
+import { useAtom } from "jotai";
+import { closeAlertAtom, loadingAlertAtom, openAlertAtom } from "@/lib/atoms/alert.atom";
+import { toast } from "sonner";
+
 export const columns: ColumnDef<UsersProps>[] = [
   {
     accessorKey: "id",
@@ -28,15 +32,42 @@ export const columns: ColumnDef<UsersProps>[] = [
     header: "Actions",
     cell: ({ row }) => {
       const user = row.original;
-
+      const openAlert = useAtom(openAlertAtom)[1];
+      const closeAlert = useAtom(closeAlertAtom)[1];
+      const loadingAlert = useAtom(loadingAlertAtom)[1];
       const handleEdit = () => {
         console.log("Edit:", user.id);
         // router.push(`/users/${user.id}/edit`)
       };
 
       const handleDelete = () => {
-        console.log("Delete:", user.id);
-        // Open confirmation dialog
+         openAlert({
+                title: "Delete User",
+                type: "Delete",
+                message: `Are you sure you want to delete ${user.name}? This action cannot be undone.`,
+                onConfirm: async () => {
+                      loadingAlert()
+                      const res = await fetch(`/api/users/${user.id}`, {
+                          method: "DELETE",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          credentials: "include",
+                        });
+                        const result = await res.json();
+                        console.log("res", result);
+                        if(result.err == 0){ 
+                          toast.success("User deleted successfully.")
+                          closeAlert();
+                          loadingAlert()
+                        }else{
+                          toast.error(result.msg)
+                          closeAlert();
+                          loadingAlert()
+                        }
+      
+                },
+              });
       };
 
       return (

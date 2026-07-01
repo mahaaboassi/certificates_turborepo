@@ -17,6 +17,7 @@ model User {
   email     String   @unique
   password  String
   role      Role     @default(SUPERVISOR)
+  file      String?
   createdAt DateTime @default(now())
   updatedAt DateTime? @updatedAt
 
@@ -38,7 +39,6 @@ enum Role {
   ADMIN
   SUPERVISOR
 }
-
 
 model Institution {
   id          Int      @id @default(autoincrement())

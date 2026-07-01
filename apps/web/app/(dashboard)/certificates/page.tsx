@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { CertificationsComponent } from "./certifications";
+import { DataTableComponent } from "@/components/layouts/dataTable";
 // Shared from Packages
 import { Helper } from "@repo/utils/helper";
 import { apiRoutes } from "@repo/utils/apiRoutes";
@@ -26,7 +26,7 @@ const Certifications = async () => {
   if(result.ok)
   return(<div className="space-y-4">
     <h1> Certificates List</h1>
-    <CertificationsComponent columns={columns} data={result.data.data}/>
+    <DataTableComponent columns={columns} data={result.data.data}/>
   </div>)
 }
 export default Certifications

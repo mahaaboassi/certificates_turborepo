@@ -1,10 +1,11 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { UsersComponent } from "./users";
+import { DataTableComponent } from "@/components/layouts/dataTable";
 // Shared from Packages
 import { Helper } from "@repo/utils/helper";
 import { apiRoutes } from "@repo/utils/apiRoutes";
 import { columns } from "./columns";
+
 
 
 
@@ -26,7 +27,7 @@ const Users = async () => {
   if(result.ok)
   return(<div className="space-y-4">
     <h1> Users List</h1>
-    <UsersComponent columns={columns} data={result.data.data}/>
+    <DataTableComponent columns={columns} data={result.data.data}/>
   </div>)
 }
 export default Users

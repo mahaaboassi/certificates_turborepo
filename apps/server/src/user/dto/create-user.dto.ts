@@ -18,4 +18,8 @@ export class CreateUserDto {
   @IsOptional()
   @IsEnum(UserRole, { message: 'Role must be ADMIN or SUPERVISOR' })
   role: UserRole = UserRole.SUPERVISOR;
+
+  @IsOptional()
+  @IsString()
+  file?: string;
 }

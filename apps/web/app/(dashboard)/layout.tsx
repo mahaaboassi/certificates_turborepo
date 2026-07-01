@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
-import AuthGuard from "@/components/layouts/authGuard";
+import AuthGuard from "@/components/wrappers/authGuard";
+import Header from "@/components/layouts/header";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -20,7 +21,8 @@ export default function RootLayout({
           <SidebarProvider>
             <AppSidebar />
             <main className="w-full ">
-              <SidebarTrigger />
+              <SidebarTrigger className="fixed" />
+              <Header/>
               <div className="p-8">{children}</div>
             </main>
           </SidebarProvider>

@@ -12,16 +12,17 @@ import { UpdateInstitutionDto } from './dto/update-institution.dto';
 export class InstitutionsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(dto: CreateInstitutionDto, userId: number) {
+  async create(dto: CreateInstitutionDto, userId: number, imageFile?: Express.Multer.File) {
     const existing = await this.prisma.institution.findUnique({
       where: { name: dto.name },
     });
     if (existing) throw new UnprocessableEntityException('Institution already exist');
-
+    const institutionLogo = imageFile ? `uploads/institutions/${imageFile.filename}` : null;
     return this.prisma.institution.create({
       data: {
         ...dto,
         createdById: userId,
+        logo: institutionLogo,
       },
       select: {
         id: true,
@@ -85,22 +86,27 @@ export class InstitutionsService {
     return institution;
   }
 
-  async update(id: number, dto: UpdateInstitutionDto, userId: number) {
+  async update(id: number, dto: UpdateInstitutionDto, userId: number, imageFile?: Express.Multer.File) {
     await this.findOne(id);
     
     const data = Object.fromEntries(
       Object.entries(dto).filter(([_, v]) => v !== undefined),
     );
 
-    if (!Object.keys(data).length)
+    if (!Object.keys(data).length && !imageFile) {
       throw new BadRequestException('No fields to update');
+    }
+    const updateData: any = {
+      ...data,
+      updatedById: userId,
+    };
 
+    if (imageFile) {
+      updateData.logo = `uploads/institutions/${imageFile?.filename}`;
+    }
     return this.prisma.institution.update({
       where: { id },
-      data: {
-        ...data,
-        updatedById: userId,
-      },
+      data: updateData,
       select: {
         id: true,
         name: true,

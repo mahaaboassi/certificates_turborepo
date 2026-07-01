@@ -1,19 +1,22 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { Geist } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner"
+import JotaiProvider from "../components/providers/jotai-provider";
+import { GlobalAlert } from "@/components/layouts/alert";
 
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
+const geistSans = Geist({
+  subsets: ["latin"],
   variable: "--font-geist-sans",
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
   variable: "--font-geist-mono",
 });
 
@@ -30,9 +33,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn("font-sans", geist.variable)}>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
-        
-         <Toaster />
+        <JotaiProvider>
+          {children}
+          <Toaster />
+          <GlobalAlert/>
+        </JotaiProvider>
       </body>
     </html>
   );

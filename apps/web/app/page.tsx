@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner"
-import Loading from "@/components/shared/loading";
+import Loading from "@/components/layouts/loading";
 import { useApi } from "@/hooks/fetchClient";
 
 
@@ -59,7 +59,8 @@ export default function Home() {
               name: result.data?.name,
               email: result.data?.email,
               id: result.data?.id,
-              role: result.data?.role
+              role: result.data?.role,
+              file: result?.data?.file
             })
           );
           router.push("/dashboard")

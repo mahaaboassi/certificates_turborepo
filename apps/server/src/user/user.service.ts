@@ -13,19 +13,22 @@ import * as bcrypt from 'bcrypt';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async create(dto: CreateUserDto, userId) {
+  async create(dto: CreateUserDto, userId, imageFile?: Express.Multer.File) {
     const existing = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
     if (existing) throw new UnprocessableEntityException('Email already in use');
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
-
+    const userImage = imageFile
+      ? `uploads/users/${imageFile.filename}`
+      : null;
     return this.prisma.user.create({
       data: {
         ...dto,
         password: hashedPassword,
         createdById: userId,
+        file: userImage,
       },
       select: {
         id: true,
@@ -33,6 +36,7 @@ export class UserService {
         email: true,
         role: true,
         createdAt: true,
+        file: true,
         createdBy: {
           select: { id: true, name: true },
         },
@@ -49,6 +53,7 @@ export class UserService {
         role: true,
         createdAt: true,
         updatedAt: true,
+        file: true,
         createdBy: {
           select: { id: true, name: true },
         },
@@ -67,6 +72,7 @@ export class UserService {
         name: true,
         email: true,
         role: true,
+        file: true,
         createdAt: true,
         updatedAt: true,
         createdBy: {
@@ -83,33 +89,40 @@ export class UserService {
     return user;
   }
 
-  async update(id: number, dto: UpdateUserDto, userId: number) {
+  async update(id: number, dto: UpdateUserDto, userId: number, imageFile?: Express.Multer.File) {
     await this.findOne(id);
 
     // remove undefined fields
     const data = Object.fromEntries(
       Object.entries(dto).filter(([_, v]) => v !== undefined ),
     );
-    
-    if (!Object.keys(data).length)
+
+    if (!Object.keys(data).length && !imageFile) {
       throw new BadRequestException('No fields to update');
+    }
 
     if (dto.password) {
       data.password = await bcrypt.hash(dto.password, 10);
     }
 
-    
+    const updateData: any = {
+      ...data,
+      updatedById: userId,
+    };
+
+    if (imageFile) {
+      updateData.file = `uploads/users/${imageFile?.filename}`;
+    }
+
     return  await this.prisma.user.update({
         where: { id },
-        data :{
-          ...data,
-          updatedById: userId,
-        },
+        data : updateData,
         select: {
           id: true,
           name: true,
           email: true,
           role: true,
+          file: true,
           createdAt: true,
           updatedAt: true,
           createdBy: {

@@ -8,6 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@repo/ui/badge";
 import { useRouter } from "next/navigation";
 
+import { useAtom } from "jotai";
+import { closeAlertAtom, loadingAlertAtom, openAlertAtom } from "@/lib/atoms/alert.atom";
+import { toast } from "sonner";
+
 export const columns: ColumnDef<CertificatesProps>[] = [
   {
     accessorKey: "id",
@@ -75,7 +79,9 @@ export const columns: ColumnDef<CertificatesProps>[] = [
     cell: ({ row }) => {
       const router = useRouter();
       const certificate = row.original;
-
+      const openAlert = useAtom(openAlertAtom)[1];
+      const closeAlert = useAtom(closeAlertAtom)[1];
+      const loadingAlert = useAtom(loadingAlertAtom)[1];
       const handleView = () => {
         console.log("View:", certificate.id);
         router.push(`/certificate/${certificate.qrToken}`)
@@ -87,8 +93,33 @@ export const columns: ColumnDef<CertificatesProps>[] = [
       };
 
       const handleDelete = () => {
-        console.log("Delete:", certificate.id);
-        // Open confirmation dialog
+         openAlert({
+                title: "Delete Certificate",
+                type: "Delete",
+                message: `Are you sure you want to delete this certificate (${certificate.qrToken})? This action cannot be undone.`,
+                onConfirm: async () => {
+                      loadingAlert()
+                      const res = await fetch(`/api/certificates/${certificate.id}`, {
+                          method: "DELETE",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          credentials: "include",
+                        });
+                        const result = await res.json();
+                        console.log("res", result);
+                        if(result.err == 0){ 
+                          toast.success("Certificate deleted successfully.")
+                          closeAlert();
+                          loadingAlert()
+                        }else{
+                          toast.error(result.msg)
+                          closeAlert();
+                          loadingAlert()
+                        }
+      
+                },
+              });
       };
 
       return (

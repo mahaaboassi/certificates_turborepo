@@ -94,8 +94,6 @@ export class CertificationsService {
     });
     if (!institution) throw new NotFoundException('Institution not found');
 
-
-
     const qrToken = await this.generateUniqueQrToken();
     const qrImage = await this.generateQRCode(qrToken);
 
@@ -149,8 +147,6 @@ export class CertificationsService {
   }
   async update(id: number, dto: UpdateCertificationDto, user: any, certificateFile?: Express.Multer.File) {
     await this.findOne(id);
-    console.log("_______", user);
-    
 
     const data: any = Object.fromEntries(
       Object.entries(dto).filter(([_, v]) => v !== undefined),
